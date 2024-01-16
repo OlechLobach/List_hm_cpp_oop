@@ -1,5 +1,3 @@
-#ifndef LIST_H
-#define LIST_H
 #include <iostream>
 
 using namespace std;
@@ -14,57 +12,72 @@ public:
 };
 
 template <typename T>
-class Stack {
+class LinkedList {
 private:
-    Node<T>* top;
-    int size;
+    Node<T>* head;
 
 public:
-    Stack() : top(nullptr), size(0) {}
+    LinkedList() : head(nullptr) {}
 
-    ~Stack() {
-        Clear();
-    }
-
-    void Push(T value) {
+   
+    void AddElement(T value) {
         Node<T>* newNode = new Node<T>(value);
-        newNode->next = top;
-        top = newNode;
-        size++;
-    }
-
-    void Pop() {
-        if (IsEmpty()) {
-            cerr << "Error: Stack is empty. Cannot pop.\n";
-            return;
+        if (!head) {
+            head = newNode;
         }
-
-        Node<T>* temp = top;
-        top = top->next;
-        delete temp;
-        size--;
-    }
-
-    T Top() const {
-        if (IsEmpty()) {
-            cerr << "Error: Stack is empty. No top element.\n";
-            return T();
+        else {
+            Node<T>* temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
         }
-        return top->data;
     }
 
-    bool IsEmpty() const {
-        return top == nullptr;
-    }
-
-    int Size() const {
-        return size;
-    }
-
-    void Clear() {
-        while (!IsEmpty()) {
-            Pop();
+  
+    LinkedList<T> Clone() const {
+        LinkedList<T> cloneList;
+        Node<T>* temp = head;
+        while (temp) {
+            cloneList.AddElement(temp->data);
+            temp = temp->next;
         }
+        return cloneList;
+    }
+
+    LinkedList<T> operator+(const LinkedList<T>& otherList) const {
+        LinkedList<T> resultList = *this;
+        Node<T>* temp = otherList.head;
+        while (temp) {
+            resultList.AddElement(temp->data);
+            temp = temp->next;
+        }
+        return resultList;
+    }
+
+    LinkedList<T> operator*(const LinkedList<T>& otherList) const {
+        LinkedList<T> commonList;
+        Node<T>* temp1 = head;
+        while (temp1) {
+            Node<T>* temp2 = otherList.head;
+            while (temp2) {
+                if (temp1->data == temp2->data) {
+                    commonList.AddElement(temp1->data);
+                    break;
+                }
+                temp2 = temp2->next;
+            }
+            temp1 = temp1->next;
+        }
+        return commonList;
+    }
+
+    void PrintList() const {
+        Node<T>* temp = head;
+        while (temp) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
     }
 };
-#endif
